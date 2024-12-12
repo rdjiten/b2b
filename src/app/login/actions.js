@@ -14,12 +14,11 @@ const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }).trim(),
     password: z
         .string()
-        .min(8, { message: "Password must be at least 8 characters" })
+        .min(5, { message: "Password must be at least 5 characters" })
         .trim(),
 });
 
 export async function login(prevState, formData) {
-    console.log("loggin")
     
     const result = loginSchema.safeParse(Object.fromEntries(formData));
 
@@ -30,7 +29,6 @@ export async function login(prevState, formData) {
     }
 
     const { email, password } = result.data;
-    console.log(email, password)
 
     if (email !== testUser.email || password !== testUser.password) {
         return {
@@ -41,7 +39,6 @@ export async function login(prevState, formData) {
     }
 
     await createSession(testUser.id);
-    debugger
 
     redirect("/dashboard");
 
