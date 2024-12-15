@@ -21,11 +21,10 @@ export async function POST(req) {
             return new Response("Invalid email or password", { status: 401 });
         }
 
-        // Create session logic (this might be using cookies or JWT tokens)
         await createSession(user._id, user.role);
 
         // Return the user details (excluding password)
-        const { password: _, _id, ...userDetails } = user;  // Exclude password
+        const { password: _, _id, createdAt, ...userDetails } = user;  
         return new Response(JSON.stringify(userDetails), {
             status: 200,
             headers: { "Content-Type": "application/json" },

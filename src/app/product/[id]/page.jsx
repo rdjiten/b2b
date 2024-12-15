@@ -42,7 +42,7 @@ export default function ProductPage({ params }) {
     if (!product) {
         return (
             <div className="text-center py-10">
-                <p>Product doesn't exist. Go to <Link href="/dashboard" className="text-blue-500 hover:underline">Dashboard</Link></p>
+                <p>Product doesn't exist. Go to <Link href="/" className="text-blue-500 hover:underline">Home page</Link></p>
             </div>
         );
     }

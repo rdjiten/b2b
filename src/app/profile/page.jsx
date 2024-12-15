@@ -5,14 +5,35 @@ import Link from "next/link";
 
 export default function Profile() {
     const userId = 1;
-    const userDetails = JSON.parse(localStorage.getItem("user"))
+    const [userDetails, setUserDetails] = useState({});
+    useEffect(() => {
+
+        if (typeof window !== "undefined") {
+
+            const user = JSON.parse(localStorage.getItem("user"))
+            setUserDetails(user);
+        }
+    }, [])
 
     const [formData, setFormData] = useState({
-        name: userDetails.name,
-        email: userDetails.email,
-        phone: userDetails.phoneNumber,
-        address: userDetails.address,
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
     });
+
+    useEffect(() => {
+        if (userDetails) {
+            setFormData({
+                ...formData,
+                name: userDetails.name,
+                email: userDetails.email,
+                phone: userDetails.phoneNumber,
+                address: userDetails.address,
+
+            })
+        }
+    }, [userDetails])
 
     const [isEditing, setIsEditing] = useState(false);
 

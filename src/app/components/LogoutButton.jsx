@@ -7,7 +7,7 @@ export default function LogoutButton() {
         method: 'POST',
       });
       if (res.ok) {
-        // Redirect to login after logout
+        localStorage.removeItem('user');
         window.location.href = '/login';
       } else {
         const error = await res.json();
