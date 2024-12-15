@@ -47,3 +47,36 @@ body {
   color: white;
   background-color: #0070f3;
 }
+
+/* styles/globals.css */
+.toast {
+  min-width: 250px;
+  font-size: 14px;
+  color: white;
+  opacity: 0;
+  animation: fadeInOut 4s ease-in-out;
+  transition: opacity 0.5s ease;
+}
+
+.toast-success {
+  background-color: #4caf50;
+}
+
+.toast-error {
+  background-color: #f44336;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

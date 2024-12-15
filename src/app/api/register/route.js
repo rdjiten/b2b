@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = 'b2b'; // Your database name
+const MONGODB_DB = 'b2b'; 
 
 let cachedDb = null;
 const client = new MongoClient(MONGODB_URI);

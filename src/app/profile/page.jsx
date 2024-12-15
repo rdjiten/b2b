@@ -1,26 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from 'react-toastify'; // Import the toast function
 import Link from "next/link";
 
 export default function Profile() {
-    const userId = 1;
     const [userDetails, setUserDetails] = useState({});
-    useEffect(() => {
-
-        if (typeof window !== "undefined") {
-
-            const user = JSON.parse(localStorage.getItem("user"))
-            setUserDetails(user);
-        }
-    }, [])
-
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         address: "",
     });
+    const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = JSON.parse(localStorage.getItem("user"));
+            setUserDetails(user);
+        }
+    }, []);
 
     useEffect(() => {
         if (userDetails) {
@@ -30,12 +29,9 @@ export default function Profile() {
                 email: userDetails.email,
                 phone: userDetails.phoneNumber,
                 address: userDetails.address,
-
-            })
+            });
         }
-    }, [userDetails])
-
-    const [isEditing, setIsEditing] = useState(false);
+    }, [userDetails]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,8 +41,43 @@ export default function Profile() {
         }));
     };
 
+    const updateUser = async () => {
+        try {
+            const response = await fetch("/api/editUser", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    phoneNumber: formData.phone,
+                    address: formData.address,
+                    email: formData.email
+                }),
+            });
+
+            const data = await response.json();
+
+
+            if (response.ok) {
+                toast.success("User updated successfully!");  // Show success toast
+                if (data?.user) {
+
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                }
+            } else {
+                toast.error(data.error || "Error updating user");  // Show error toast
+            }
+        } catch (error) {
+            // Handle unexpected errors (e.g., network issues)
+            toast.error("An unexpected error occurred. Please try again later.");
+            console.error(error);  // Log the error for debugging purposes
+        }
+    };
+
+
     const handleSave = () => {
-        // Implement save logic (e.g., API call to save profile data)
+        updateUser();
         setIsEditing(false);
     };
 
@@ -54,28 +85,8 @@ export default function Profile() {
         setIsEditing(true);
     };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch(`/api/user/${userId}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setUser(data);
-                } else {
-                    console.error('Failed to fetch user');
-                }
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUser();
-    }, [userId]);
-
     return (
-        <div className="min-h-screen bg-gray-100 py-12 px-6">
+        <div className="min-h-screen py-12 px-6">
             <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -102,8 +113,7 @@ export default function Profile() {
                 </div>
 
                 <div className="mt-8 space-y-6">
-                    {formData.name
-                        ?
+                    {userDetails?.role !== 'admin' && (
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-600">Full Name</label>
                             <input
@@ -116,9 +126,7 @@ export default function Profile() {
                                 className="mt-2 p-3 w-full border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             />
                         </div>
-                        :
-                        ""
-                    }
+                    )}
 
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email</label>
@@ -132,8 +140,7 @@ export default function Profile() {
                             className="mt-2 p-3 w-full border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         />
                     </div>
-                    {formData.phone
-                        ?
+                    {userDetails?.role !== 'admin' && (
                         <div>
                             <label htmlFor="phone" className="block text-sm font-medium text-gray-600">Phone</label>
                             <input
@@ -143,13 +150,13 @@ export default function Profile() {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 disabled={!isEditing}
+                                required
                                 className="mt-2 p-3 w-full border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             />
                         </div>
-                        : ""}
+                    )}
 
-                    {formData.address
-                        ?
+                    {userDetails?.role !== 'admin' && (
                         <div>
                             <label htmlFor="address" className="block text-sm font-medium text-gray-600">Address</label>
                             <input
@@ -159,14 +166,14 @@ export default function Profile() {
                                 onChange={handleChange}
                                 disabled={!isEditing}
                                 className="mt-2 p-3 w-full border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                            ></input>
+                            />
                         </div>
-                        : ""}
+                    )}
                 </div>
 
                 <div className="mt-6">
                     <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-500">
-                        Back to Dashboard
+                        Back to Home Page
                     </Link>
                 </div>
             </div>

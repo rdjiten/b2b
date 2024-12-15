@@ -1,8 +1,10 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
+import { cookies } from 'next/headers';
 import { z } from 'zod';
+import { decrypt } from '../../lib/session';
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = 'b2b'; // Your database name
+const MONGODB_DB = 'b2b';
 
 let cachedDb = null;
 const client = new MongoClient(MONGODB_URI);
@@ -27,7 +29,11 @@ const userEditSchema = z.object({
 });
 
 export async function PATCH(req) {
-    const { userId, name, email, phoneNumber, address } = await req.json();
+    const cookiesStore = await cookies();
+    const cookie = cookiesStore.get("session")?.value;
+    const session = await decrypt(cookie);
+    const userId = session.userId;
+    const { email, name, phoneNumber, address } = await req.json();
 
     // Validate the data
     const result = userEditSchema.safeParse({ name, phoneNumber, address });
@@ -39,7 +45,7 @@ export async function PATCH(req) {
         const db = await connectToDatabase();
 
         // Find the user by ID
-        const user = await db.collection('users').findOne({ _id: new MongoClient.ObjectId(userId) });
+        const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
 
         if (!user) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
@@ -50,10 +56,11 @@ export async function PATCH(req) {
         if (name) updatedData.name = name;
         if (phoneNumber) updatedData.phoneNumber = phoneNumber;
         if (address) updatedData.address = address;
+        if (email) updatedData.email = email;
 
         // Update the user in the database
         const result = await db.collection('users').updateOne(
-            { _id: new MongoClient.ObjectId(userId) },
+            { _id: new ObjectId(userId) },
             { $set: updatedData }
         );
 
@@ -61,10 +68,16 @@ export async function PATCH(req) {
             return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 400 });
         }
 
-        // Return the updated user details
-        const updatedUser = await db.collection('users').findOne({ _id: new MongoClient.ObjectId(userId) });
-
-        return new Response(JSON.stringify({ user: updatedUser }), { status: 200 });
+        // Return the updated user details with a success message
+        const updatedUser = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+        const { password: _, _id, createdAt, ...userDetails } = updatedUser;
+        return new Response(
+            JSON.stringify({
+                message: 'User updated successfully',
+                user: userDetails
+            }),
+            { status: 200 }
+        );
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ error: 'Something went wrong' }), { status: 500 });

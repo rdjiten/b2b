@@ -1,77 +1,91 @@
-// app/seller/[id]/page.jsx
 "use client";
 
 import { useState, useEffect, use } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import styles from "./SellerProfile.module.css"; // Assuming you have a CSS module
 
-export default function ProductPage({ params }) {
+export default function SellerProfile({ params }) {
     const { id } = use(params);
     const [seller, setSeller] = useState(null);
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(true);
+    const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        async function fetchProduct() {
+        async function fetchSellerData() {
             try {
+                // Fetch seller data
                 const res = await fetch(`/api/sellers`);
-                if (!res.ok) throw new Error("Failed to fetch products");
+                if (!res.ok) throw new Error("Failed to fetch seller data");
 
                 const sellers = await res.json();
-                const foundProduct = sellers.find((p) => p.id === parseInt(id));
+                const foundSeller = sellers.find((s) => s.id === parseInt(id));
+                console.log(foundSeller)
+                if (foundSeller) {
+                    setSeller(foundSeller);
+                    setStatus(foundSeller.status);
 
-                if (foundProduct) {
-                    setSeller(foundProduct);
-                    setStatus(foundProduct.status);
+                    // Fetch and filter the products based on seller ID
+                    const productRes = await fetch(`/api/products`);
+                    if (!productRes.ok) throw new Error("Failed to fetch products");
+
+                    const productsData = await productRes.json();
+                    debugger
+                    const sellerProducts = productsData.filter(product => product.sellerId === (id));
+
+                    setProducts(sellerProducts);
                 } else {
-                    // Trigger notFound() if the seller doesn't exist
                     notFound();
                 }
             } catch (error) {
-                console.error("Error fetching seller:", error);
-                notFound(); // Redirect to 404 if an error occurs
+                console.error("Error fetching data:", error);
+                notFound();
             } finally {
                 setLoading(false);
             }
         }
 
-        fetchProduct();
+        fetchSellerData();
     }, [id]);
 
-    if (loading) return <p>Loading...</p>;
-    if (!seller) {
-        return <>Product doesn't exists. Go to <Link href="/">Dashboard</Link></>; 
-    }
-    return (
-        <div style={{ padding: "1rem" }}>
-            <h1>Seller Profile</h1>
+    if (loading) return <div className={styles["loading-spinner"]}>Loading...</div>;
 
-            <h1>{seller.name}</h1>
-            <p>{seller.description}</p>
-            <p>
-                <strong>Status:</strong> {seller.status}
-            </p>
-            <label>
-                Update Status:{" "}
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <option value="Available">Available</option>
-                    <option value="Sold">Sold</option>
-                </select>
-            </label>
-            <button onClick={async () => {
-                const res = await fetch(`/api/products`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id, status }),
-                });
-                if (res.ok) {
-                    const updatedProduct = await res.json();
-                    setProduct(updatedProduct);
-                    alert("Product status updated!");
-                } else {
-                    alert("Failed to update status.");
-                }
-            }}>Update</button>
+    if (!seller) {
+        return (
+            <div>
+                Seller doesn't exist. Go to <Link href="/">Dashboard</Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className={styles["seller-profile-container"]}>
+            <div className={styles["profile-card"]}>
+                <h2>{seller.name}</h2>
+                <p><strong>Contact:</strong> {seller.contact}</p>
+                <p><strong>Description:</strong> {seller.description}</p>
+
+                <h3 className="text-2xl mt-5">Products Sold</h3>
+                <ul className={styles[""]}>
+                    {products.length > 0 ? (
+                        products.map((product) => (
+                            <li key={product.id} className={styles["product-item"]}>
+                                <strong>{product.name}</strong>: {product.description} - {product.status}
+                            </li>
+                        ))
+                    ) : (
+                        <p>No products listed.</p>
+                    )}
+                </ul>
+                <Link href={`/profile`} passHref>
+                    <button
+                        className="btn mt-3 hover:text-white hover:bg-blue-200"
+                    >
+                        Edit Profile
+                    </button>
+                </Link>
+            </div>
         </div>
     );
 }
