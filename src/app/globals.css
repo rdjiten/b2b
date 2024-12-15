@@ -17,3 +17,33 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.btn {
+  color: #007bff;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid #007bff;
+  border-radius: 0.25rem;
+  padding: 10px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.product-card {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+}
+.product-card h2 {
+  margin: 0 0 15px;
+}
+.product-card .status-chip {
+  margin: 15px 0;
+}
+.product-card .btn:hover {
+  color: white;
+  background-color: #0070f3;
+}

@@ -1,9 +1,45 @@
 'use client';
-import { useActionState } from "react"
-import { login } from "./actions"
+import Link from "next/link";
+import { useState } from "react";
 
-export default function Example() {
-    const [state, loginAction] = useActionState(login, undefined)
+export default function LoginForm() {
+    const [errors, setErrors] = useState(null);
+    const [formSubmitted, setFormSubmitted] = useState(false);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setErrors(null);
+        setFormSubmitted(true);
+        const formData = new FormData(event.target);
+
+        try {
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: formData.get("email"),
+                    password: formData.get("password"),
+                }),
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                setErrors(errorText || "Login failed");
+            } else {
+                const userData = await res.json();
+                // Store user details in localStorage
+                localStorage.setItem("user", JSON.stringify(userData));
+
+                window.location.href = "/"; // Redirect after successful login
+            }
+
+        } catch (error) {
+            setErrors(error.message);
+        }
+        finally {
+            setFormSubmitted(false)
+        }
+    };
     return (
         <>
             {/*
@@ -27,7 +63,7 @@ export default function Example() {
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form action={loginAction} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address
@@ -40,7 +76,7 @@ export default function Example() {
                                     required
                                     autoComplete="email"
                                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                                    placeholder="admin@admin.com"
+                                    placeholder="admin@example.com"
                                 />
                             </div>
                         </div>
@@ -66,19 +102,23 @@ export default function Example() {
 
                         <div>
                             <button
+                                disabled={formSubmitted ? true : false}
                                 type="submit"
                                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                Sign in
+                                {formSubmitted ? "Submitting..." : "Submit"}
                             </button>
+                        </div>
+                        <div className="text-red-600">
+
+                            {errors}
                         </div>
                     </form>
 
                     <p className="mt-10 text-center text-sm/6 text-gray-500">
                         Not a member?{' '}
-                        <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                            Start a 14 day free trial
-                        </a>
+                        <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">Register</Link>
+
                     </p>
                 </div>
             </div>

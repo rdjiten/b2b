@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Alice's Handicrafts",
+    "email": "alice@example.com",
+    "contact": "123-456-7890",
+    "products": [
+      { "id": 1, "name": "Handmade Basket" },
+      { "id": 2, "name": "Knitted Scarf" }
+    ]
+  },
+  {
+    "name": "Bob's Art Supplies",
+    "email": "bob@example.com",
+    "contact": "987-654-3210",
+    "products": [
+      { "id": 1, "name": "Oil Paint Set" },
+      { "id": 2, "name": "Watercolor Paper" },
+      { "id": 3, "name": "Sketch Pencils" }
+    ]
+  },
+  {
+    "name": "Charlie's Gourmet",
+    "email": "charlie@example.com",
+    "contact": "555-123-4567",
+    "products": [
+      { "id": 1, "name": "Organic Honey" },
+      { "id": 2, "name": "Artisanal Cheese" },
+      { "id": 3, "name": "Gourmet Coffee Beans" }
+    ]
+  }
+]

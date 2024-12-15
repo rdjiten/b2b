@@ -5,9 +5,9 @@ import { cookies } from "next/headers";
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
-export async function createSession(userId) {
+export async function createSession(userId, role) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
-    const session = await encrypt({ userId, expiresAt });
+    const session = await encrypt({ userId, role, expiresAt });
 
     // Await cookies() before using its methods
     const cookiesStore = await cookies();
@@ -20,7 +20,9 @@ export async function createSession(userId) {
 
 
 export async function deleteSession() {
-    cookies().delete("session");
+    const cookiesStore = await cookies();
+
+    cookiesStore.delete("session");
 }
 
 
