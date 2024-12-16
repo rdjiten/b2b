@@ -21,7 +21,7 @@ export default async function middleware(req) {
     }
 
     if (isAdminRoute && session?.role !== "admin") {
-        return NextResponse.redirect(new URL("/", req.nextUrl)); // Redirect non-admins
+        return NextResponse.redirect(new URL("/", req.nextUrl));
     }
 
     if (isPublicRoute && session?.userId) {

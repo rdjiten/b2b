@@ -21,15 +21,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    // Initial product fetch
     fetchProducts();
 
-    // Polling mechanism - fetch products every 5 seconds
     const interval = setInterval(() => {
-      fetchProducts(); // Fetch the products again to check for status updates
-    }, 10000); // 5 seconds interval
-
-    // Clean up interval on component unmount
+      fetchProducts(); 
+    }, 10000); 
     return () => {
       clearInterval(interval);
     };

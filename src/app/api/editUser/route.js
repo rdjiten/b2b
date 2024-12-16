@@ -51,14 +51,12 @@ export async function PATCH(req) {
             return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
         }
 
-        // Create an object with the fields to update (only non-empty fields)
         const updatedData = {};
         if (name) updatedData.name = name;
         if (phoneNumber) updatedData.phoneNumber = phoneNumber;
         if (address) updatedData.address = address;
         if (email) updatedData.email = email;
 
-        // Update the user in the database
         const result = await db.collection('users').updateOne(
             { _id: new ObjectId(userId) },
             { $set: updatedData }
@@ -68,7 +66,6 @@ export async function PATCH(req) {
             return new Response(JSON.stringify({ error: 'Failed to update user' }), { status: 400 });
         }
 
-        // Return the updated user details with a success message
         const updatedUser = await db.collection('users').findOne({ _id: new ObjectId(userId) });
         const { password: _, _id, createdAt, ...userDetails } = updatedUser;
         return new Response(

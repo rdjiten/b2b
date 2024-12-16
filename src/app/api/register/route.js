@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = 'b2b'; 
+const MONGODB_DB = 'b2b';
 
 let cachedDb = null;
 const client = new MongoClient(MONGODB_URI);
@@ -45,16 +45,13 @@ export async function POST(req) {
   try {
     const db = await connectToDatabase();
 
-    // Check if email already exists
     const existingUser = await db.collection('users').findOne({ email });
     if (existingUser) {
       return new Response(JSON.stringify({ error: 'Email is already registered' }), { status: 400 });
     }
 
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user into the database
     const result = await db.collection('users').insertOne({
       name,
       email,
@@ -65,10 +62,10 @@ export async function POST(req) {
       role: "seller"
     });
 
-    // Return the user details (you can omit password from this)
     const newUser = await db.collection('users').findOne({ _id: result.insertedId });
 
-    return new Response(JSON.stringify({ user: newUser }), { status: 201 });
+    const { password: _, createdAt, ...userDetails } = newUser;
+    return new Response(JSON.stringify({ user: userDetails }), { status: 201 });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'Something went wrong' }), { status: 500 });

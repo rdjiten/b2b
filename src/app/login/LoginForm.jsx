@@ -27,10 +27,9 @@ export default function LoginForm() {
                 setErrors(errorText || "Login failed");
             } else {
                 const userData = await res.json();
-                // Store user details in localStorage
                 localStorage.setItem("user", JSON.stringify(userData));
 
-                window.location.href = "/"; // Redirect after successful login
+                window.location.href = "/";
             }
 
         } catch (error) {
@@ -42,14 +41,6 @@ export default function LoginForm() {
     };
     return (
         <>
-            {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img

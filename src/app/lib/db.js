@@ -1,8 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = 'b2b'; // Your MongoDB database name
-
+const MONGODB_DB = 'b2b'; 
 let cachedDb = null;
 const client = new MongoClient(MONGODB_URI);
 

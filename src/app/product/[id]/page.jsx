@@ -23,12 +23,11 @@ export default function ProductPage({ params }) {
                 setProduct(foundProduct);
                 setStatus(foundProduct.status);
             } else {
-                // Trigger notFound() if the product doesn't exist
                 notFound();
             }
         } catch (error) {
             console.error("Error fetching product:", error);
-            notFound(); // Redirect to 404 if an error occurs
+            notFound(); 
         } finally {
             setLoading(false);
         }
@@ -37,13 +36,12 @@ export default function ProductPage({ params }) {
     useEffect(() => {
         fetchProduct();
 
-        // Set up polling to check for product status updates every 5 seconds
         const interval = setInterval(() => {
-            fetchProduct(); // Fetch the product again to check for status updates
-        }, 5000); // 5 seconds interval
+            fetchProduct();
+        }, 10000); 
 
         return () => {
-            clearInterval(interval); // Clean up the interval when the component unmounts
+            clearInterval(interval); 
         };
     }, [id]);
 

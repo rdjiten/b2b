@@ -59,7 +59,6 @@ export default function Example() {
                     type: "success"
                 });
 
-                // Handle auto-login
                 try {
                     const res = await fetch("/api/login", {
                         method: "POST",
@@ -71,7 +70,10 @@ export default function Example() {
                         const errorText = await res.text();
                         setError(errorText || "Login failed");
                     } else {
-                        window.location.href = "/"; // Redirect after successful login
+                        const userData = await res.json();
+                        localStorage.setItem("user", JSON.stringify(userData));
+
+                        window.location.href = "/";
                     }
                 } catch (loginError) {
                     setError(loginError.message);

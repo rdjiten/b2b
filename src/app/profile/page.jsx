@@ -60,18 +60,17 @@ export default function Profile() {
 
 
             if (response.ok) {
-                toast.success("User updated successfully!");  // Show success toast
+                toast.success("User updated successfully!");
                 if (data?.user) {
 
                     localStorage.setItem("user", JSON.stringify(data.user));
                 }
             } else {
-                toast.error(data.error || "Error updating user");  // Show error toast
+                toast.error(data.error || "Error updating user");  
             }
         } catch (error) {
-            // Handle unexpected errors (e.g., network issues)
             toast.error("An unexpected error occurred. Please try again later.");
-            console.error(error);  // Log the error for debugging purposes
+            console.error(error);  
         }
     };
 

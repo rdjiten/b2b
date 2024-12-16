@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Link from 'next/link';
 
 export default function Example() {
     const [result, setResult] = useState({});
@@ -10,7 +9,7 @@ export default function Example() {
         email: '',
         password: '',
         confirmPassword: '',
-        isAdmin: false // New field for admin toggle
+        isAdmin: false
     });
 
     const [error, setError] = useState('');
@@ -19,7 +18,7 @@ export default function Example() {
         const { name, value, type, checked } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: type === 'checkbox' ? checked : value // Handle checkbox input
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
@@ -35,7 +34,7 @@ export default function Example() {
         const userData = {
             email,
             password,
-            role: isAdmin ? 'admin' : 'user', // Set role based on isAdmin checkbox
+            role: isAdmin ? 'admin' : 'user',
         };
         setFormSubmitted(true);
 

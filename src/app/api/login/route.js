@@ -23,7 +23,6 @@ export async function POST(req) {
 
         await createSession(user._id, user.role);
 
-        // Return the user details (excluding password)
         const { password: _, _id, createdAt, ...userDetails } = user;  
         return new Response(JSON.stringify(userDetails), {
             status: 200,

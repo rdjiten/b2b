@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import styles from "./SellerProfile.module.css"; // Assuming you have a CSS module
+import styles from "./SellerProfile.module.css"; 
 
 export default function SellerProfile({ params }) {
     const { id } = use(params);
@@ -26,7 +26,6 @@ export default function SellerProfile({ params }) {
                     setSeller(foundSeller);
                     setStatus(foundSeller.status);
 
-                    // Fetch and filter the products based on seller ID
                     const productRes = await fetch(`/api/products`);
                     if (!productRes.ok) throw new Error("Failed to fetch products");
 

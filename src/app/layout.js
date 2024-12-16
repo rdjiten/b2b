@@ -5,9 +5,7 @@ import Navbar from './components/Navbar'
 import { usePathname } from "next/navigation";
 import { disableNav } from './utils/disableNav'
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'; // Import React Toastify styles
-
-// import { useState } from "react";
+import 'react-toastify/dist/ReactToastify.css'; 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,14 +21,6 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const showNavbar = pathname !== "/login";
 
-
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // useEffect(() => {
-  //   // Simulate a login check
-  //   const token = localStorage.getItem("authToken");
-  //   setIsLoggedIn(!!token);
-  // }, []);
   return (
     <html lang="en">
       <body

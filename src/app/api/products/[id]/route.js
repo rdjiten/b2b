@@ -1,11 +1,10 @@
-import { connectToDatabase } from '../../../lib/db'; // Adjust path if needed
-
+import { connectToDatabase } from '../../../lib/db';
 export async function PUT(req, { params }) {
     const { id } = params;
     const { status } = await req.json();
 
     try {
-        // Connect to the MongoDB database
+        
         const db = await connectToDatabase();
 
         if (!db) {

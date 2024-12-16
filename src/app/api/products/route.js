@@ -1,11 +1,10 @@
-import { connectToDatabase } from '../../lib/db'; // Adjust path if needed
-
+import { connectToDatabase } from '../../lib/db';
 export async function GET(req) {
     try {
-        // Connect to the MongoDB database
+        
         const db = await connectToDatabase();
 
-        // Check if the db object is returned correctly
+        
         if (!db) {
             console.error("Database connection failed");
             return new Response('Database connection failed', { status: 500 });
